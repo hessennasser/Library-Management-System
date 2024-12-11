@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Welcome to Library Management System</h1>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <h2>Available Books</h2>
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for book in books %}
+                    <tr>
+                        <td>{{ book.title }}</td>
+                        <td>{{ book.author.name }}</td>
+                        <td>
+                            {% if book.is_available %}
+                                <span class="badge bg-success">Available</span>
+                            {% else %}
+                                <span class="badge bg-danger">Checked Out</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if current_user.is_authenticated %}
+                                {% if book.is_available and current_user.has_library_card %}
+                                    <a href="{{ url_for('checkout_book', book_id=book.id) }}" class="btn btn-primary btn-sm">Checkout</a>
+                                {% elif book.holder_id == current_user.id %}
+                                    <a href="{{ url_for('return_book', book_id=book.id) }}" class="btn btn-warning btn-sm">Return</a>
+                                {% endif %}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
